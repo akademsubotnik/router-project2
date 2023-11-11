@@ -17,7 +17,30 @@ scrape_configs:
   - labels:
       job: iptables
       __path__: /home/greg/tmp/router-project2/geoip-enrichment/log/syslog.log
-
+  pipeline_stages:
+      - logfmt:
+          mapping:
+           input_interface: IN
+           output_interface: OUT
+           src_ip: SRC
+           protocol: PROTO
+           dst_port: DPT
+      - geoip:
+         db: /usr/share/GeoIP/GeoLite2-City.mmdb
+         db_type: city
+         source: src_ip
+      - labeldrop:
+          - geoip_timezone
+          - geoip_subdivision_name
+          - geoip_subdivision_code
+          - geoip_postal_code
+      - labels:
+          input_interface:
+          output_interface:
+          protocol:
+          dst_port:
+      - output:
+          source: message
 
 
 # This is the endpoint we will be sending our enriched iptables logs to
