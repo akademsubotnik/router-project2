@@ -15,7 +15,7 @@ services:
       - grafana
 
   loki:
-    image: grafana/loki:2.7.1
+    image: grafana/loki:2.9.1
     hostname: loki
     container_name: loki
     restart: unless-stopped
@@ -25,20 +25,21 @@ services:
       - grafana
 
   promtail:
-    image: grafana/promtail:2.7.1
+    image: grafana/promtail:2.9.1
     hostname: promtail
     container_name: promtail
     restart: unless-stopped
     volumes:
       - ./promtail.yaml:/etc/promtail/promtail.yaml:ro
       - ./geoip-enrichment/log/syslog.log:/var/log/syslog/syslog.log:ro
-    command: 
+      - ./GeoIPLite/GeoLite2-City_20231107/GeoLite2-City.mmdb:/usr/share/GeoIP/GeoLite2-City.mmdb:ro
+    command:
       - '-config.file=/etc/promtail/promtail.yaml'
       #- '-config.file=/home/greg/tmp/router-project2/promtail.yaml'
     networks:
       - loki
       - promtail
-        
+
   #syslog-ng , retrieve logs from router
   #syslog-ng:
   #  image: lscr.io/linuxserver/syslog-ng:latest
