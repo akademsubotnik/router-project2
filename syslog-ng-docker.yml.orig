@@ -1,0 +1,16 @@
+version: "2.1"
+services:
+  #syslog-ng , retrieve logs from router
+  syslog-ng:
+    image: lscr.io/linuxserver/syslog-ng:latest
+    container_name: syslog-ng
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ./config:/config
+      - ./log:/var/log #optional
+    ports:
+      - 514:514/tcp
+    restart: unless-stopped

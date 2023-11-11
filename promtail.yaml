@@ -1,0 +1,37 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+  log_level: debug
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+- job_name: iptables
+  static_configs:
+  - targets:
+    - localhost
+  - labels:
+      job: iptables
+      __path__: /home/greg/tmp/router-project2/geoip-enrichment/log/syslog.log
+    #- targets:
+    #- localhost
+    #- labels:
+    #  job: iptables
+    #  __path__: /home/greg/tmp/router-project2/geoip-enrichment/log/syslog.log
+    #listen_address: 0.0.0.0:8514
+    #labels:
+    #  job: iptables
+
+
+
+# This is the endpoint we will be sending our enriched iptables logs to
+#- job_name: iptables
+#  syslog:
+#    listen_address: 0.0.0.0:8514
+#    labels:
+#      job: iptables
+

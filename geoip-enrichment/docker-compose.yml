@@ -1,0 +1,44 @@
+services:
+
+  syslog:
+    image: lscr.io/linuxserver/syslog-ng:latest
+    container_name: syslog
+    hostname: syslog
+    restart: unless-stopped
+      #command:
+      #- '--no-caps'
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      #- ./syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf:ro
+      - ./config:/config
+      - ./log:/var/log #optional
+        #- /var/log/iptables.log:/var/log/iptables.log:ro
+      - geoip:/usr/share/GeoIP
+    ports:
+      - 514:514/tcp
+    depends_on:
+      geoip:
+        condition: service_completed_successfully
+    networks:
+      - promtail
+
+  geoip:
+    image: maxmindinc/geoipupdate
+    container_name: geoip
+    restart: on-failure
+    environment:
+      GEOIPUPDATE_ACCOUNT_ID: 935974
+      GEOIPUPDATE_LICENSE_KEY: 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
+      GEOIPUPDATE_EDITION_IDS: GeoLite2-City
+    volumes:
+      - geoip:/usr/share/GeoIP
+
+volumes:
+  geoip: {}
+
+networks:
+  promtail:
+     external: true

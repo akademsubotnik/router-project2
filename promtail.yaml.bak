@@ -1,0 +1,41 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+  log_level: info
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+- job_name: iptables-ulogrouterlog
+  syslog:
+      listen_address: 0.0.0.0:514
+      labels:
+      job: iptables-ulogrouterlog
+  pipeline_stages:
+      - logfmt:
+          mapping:
+          input_interface: IN
+          output_interface: OUT
+          src_ip: SRC
+          protocol: PROTO
+          dst_port: DPT
+      - geoip:
+          db: /home/greg/tmp/router-project2/GeoIPLite/GeoLite2-City_20231107/GeoLite2-City.mmdb
+          db_type: city
+          source: src_ip
+      - labeldrop:
+          - geoip_timezone
+          - geoip_subdivision_name
+          - geoip_subdivision_code
+          - geoip_postal_code
+      - labels:
+          input_interface:
+          output_interface:
+          protocol:
+          dst_port:
+      - output:
+          source: message

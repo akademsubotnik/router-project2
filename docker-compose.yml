@@ -1,0 +1,62 @@
+services:
+
+  grafana:
+    image: grafana/grafana:9.2.3
+    hostname: grafana
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SERVER_DOMAIN: localhost
+    ports:
+      - '192.168.1.45:3000:3000'
+    networks:
+      - grafana
+
+  loki:
+    image: grafana/loki:2.7.1
+    hostname: loki
+    container_name: loki
+    restart: unless-stopped
+      #log.level: debug
+    networks:
+      - loki
+      - grafana
+
+  promtail:
+    image: grafana/promtail:2.7.1
+    hostname: promtail
+    container_name: promtail
+    restart: unless-stopped
+    volumes:
+      - ./promtail.yaml:/etc/promtail/promtail.yaml:ro
+      - ./geoip-enrichment/log/syslog.log:/var/log/syslog/syslog.log:ro
+    command: 
+      - '-config.file=/etc/promtail/promtail.yaml'
+      #- '-config.file=/home/greg/tmp/router-project2/promtail.yaml'
+    networks:
+      - loki
+      - promtail
+        
+  #syslog-ng , retrieve logs from router
+  #syslog-ng:
+  #  image: lscr.io/linuxserver/syslog-ng:latest
+  #  container_name: syslog-ng
+  #  environment:
+  #    - PUID=1000
+  #    - PGID=1000
+  #    - TZ=Etc/UTC
+  #  volumes:
+  #    - ./config:/config
+  #    - ./log:/var/log #optional
+  #  ports:
+  #    - 514:514/tcp
+  #  restart: unless-stopped
+
+
+networks:
+  grafana: {}
+  loki: {}
+  promtail:
+    name: promtail
