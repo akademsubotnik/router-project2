@@ -17,14 +17,6 @@ scrape_configs:
   - labels:
       job: iptables
       __path__: /home/greg/tmp/router-project2/geoip-enrichment/log/syslog.log
-    #- targets:
-    #- localhost
-    #- labels:
-    #  job: iptables
-    #  __path__: /home/greg/tmp/router-project2/geoip-enrichment/log/syslog.log
-    #listen_address: 0.0.0.0:8514
-    #labels:
-    #  job: iptables
 
 
 
@@ -34,4 +26,3 @@ scrape_configs:
 #    listen_address: 0.0.0.0:8514
 #    labels:
 #      job: iptables
-
